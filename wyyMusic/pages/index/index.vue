@@ -76,6 +76,7 @@ export default {
   font-size: 13px;
   margin-left: 13px;
   margin-right: 13px;
+
 }
 
 .index-search input {

@@ -17,6 +17,10 @@ Vue.filter('formatCount',function (val){
         return val;
     }
 })
+Vue.filter('formatTime',function (val){
+    let date = new Date(val)
+    return date.getFullYear()+'年' + (date.getMonth()+1)+ '月' + date.getDate()+ '日';
+})
 const app = new Vue({
     ...App
 })

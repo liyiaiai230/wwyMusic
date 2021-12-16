@@ -2,7 +2,7 @@
   <view class="list">
     <view class="fixbg" :style="{'background-image' : 'url('+playlist.coverImgUrl+')' }"></view>
     <musichead title="歌单" :icon="true" color="white"></musichead>
-    <view class="container" v-show="!isLoading">
+
       <scroll-view scroll-y="true">
         <view class="list-head">
           <view class="list-head-img">
@@ -32,12 +32,12 @@
             <text>播放全部</text>
             <text>(共{{playlist.trackCount}}首)</text>
           </view>
-          <view class="list-music-item" v-for="(item,index) in playlist.tracks" :key="index">
+          <view class="list-music-item" v-for="(item,index) in playlist.tracks" :key="index" @click="handleToDetail(item.id)">
             <view class="list-music-top">{{index + 1}}</view>
             <view class="list-music-song">
               <view>{{item.name}}</view>
               <view>
-                <image v-if="privileges[index].flag > 60 && privileges[index].flag < 70" src=""></image>
+                <image v-if="privileges[index].flag > 60 && privileges[index].flag < 70" src="../../static/dujia.png"></image>
                 <image v-if="privileges[index].maxbr == 999000" src="../../static/download.png"></image>
                 {{item.ar[0].name}}} - {{item.name}}
               </view>
@@ -81,13 +81,19 @@ export default {
         this.playlist = res[1].data.playlist
         this.privileges = res[1].data.privileges
         this.isLoading = false
-		uni.hideLoading();
+		    uni.hideLoading();
       }
       console.log(options.listId)
     });
 
   },
-  methods: {},
+  methods: {
+    handleToDetail(songId){
+    uni.navigateTo({
+    	url:'/pages/detail/detail?songId=' + songId
+    })
+    }
+  },
 
 }
 </script>
