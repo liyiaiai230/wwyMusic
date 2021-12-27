@@ -4,9 +4,9 @@
     <musichead :title="songDetail.name" :icon="true" color="white"></musichead>
     <view class="container">
       <scroll-view scroll-y="true">
-        <view class="detail-play">
-          <image :src="songDetail.al.picUrl"></image>
-          <text class="iconfont icon-zanting"></text>
+        <view class="detail-play" @click="handleToPlay">
+          <image :src="songDetail.al.picUrl" :class="{'detail-play-run': isPlayRotate}" ></image>
+          <text class="iconfont" :class="iconPlay"></text>
           <view></view>
         </view>
         <view class="detail-lyric">
@@ -67,13 +67,17 @@ import {songDetail, songSimi, songlyric, songComment, songUrl} from '../../commo
 export default {
   data() {
     return {
-      songDetail: {
-        al: {}
+        songDetail: {
+        al: {
+			picUrl : ''
+		}
       },
       songSimi: [],
       songComment: [],
       songlyric: [],
 	  lyricIndex: 0,
+	  iconPlay: 'icon-zanting', 
+	  isPlayRotate: true,
     }
   },
   onLoad(options) {
@@ -101,17 +105,35 @@ export default {
             this.songlyric = result;
         }
 		if(res[4][1].data.code == '200') {
-			
+			this.bgAudioMannager = uni.getBackgroundAudioManager();
+			this.bgAudioMannager.title = this.songDetail.name;
+			this.bgAudioMannager.src = res[4][1].data.data[0].url || '';
+			this.bgAudioMannager.onPlay(()=>{
+				this.iconPlay = 'icon-zanting';
+				this.isPlayRotate = true;
+			});
+			this.bgAudioMannager.onPause(()=>{
+				this.iconPlay = 'icon-bofang'; 
+				this.isPlayRotate = false;
+			});
 		}
       });
     },
       formatTimeToSec(val){
         let arr = val.split(":");
 		parseFloat(arr[0]*60)
-        return (Number(arr[0]*60)+ Number(arr[1])).toFixed(1); 
-      }
+        return (Number(arr[0]*60)+ Number(arr[1])).toFixed(1);
   },
-  components: {
+	  handleToPlay(){
+		if(this.bgAudioMannager.paused ) {
+			this.bgAudioMannager.play();
+		}
+		else{
+		this.bgAudioMannager.pause()		
+		}
+	},
+},
+components: {
     Musichead,
   }
 }
@@ -136,8 +158,14 @@ export default {
   right: 0;
   bottom: 0;
   margin: auto;
+  animation:10s linear move infinite;
+  animation-play-state: paused;
 }
-
+ .detail-play .detail-play-run {animation-play-state: running;}
+	@keyframes move{
+		from{transform: rotate(0deg);}
+		to{transform:rotate(360deg);}
+	}
 .detail-play text {
   width: 100px;
   height: 50px;
