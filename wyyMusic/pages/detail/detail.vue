@@ -10,15 +10,15 @@
           <view></view>
         </view>
         <view class="detail-lyric">
-          <view class="detail-lyric-wrap">
+          <view class="detail-lyric-wrap":style="{transform: 'translateY('+ -(lyricIndex -1)* 82 +'rpx)'}">
             <view class="detail-lyric-item" :class="{active : lyricIndex == index}" v-for="(item,index) in songlyric" :key="index">{{item.lyric}}</view>
             <view class="detail-lyric-item active">测试</view>
-            <view class="detail-lyric-item">测试</view>
+            <view class="detail-lyric-item">测试</view> 
           </view>
         </view>
         <view class="detail-like">
           <view class="detail-like-head">喜欢这首歌的人也听</view>
-          <view class="detail-like-item" v-for="(item,index) in songSimi" :key="index">
+          <view class="detail-like-item" v-for="(item,index) in songSimi" :key="index" @tap='handleToSimi(item.id)'>
             <view class="detail-like-img">
               <image :src="item.album.picUrl" mode=""></image>
             </view>
@@ -83,8 +83,25 @@ export default {
   onLoad(options) {
     this.getMusic(options.songId)
   },
+  onUnload() {
+  	this.cancelLyricIndex()
+	// #ifdef H5 
+	this.bgAudioMannager.destroy()
+	// #endif
+	
+  },
+  onHide() {
+  	this.cancelLyricIndex()
+	// #ifdef H5
+	this.bgAudioMannager.destroy()
+	// #endif 
+	
+  },
   methods: {
     getMusic(songId) {
+		
+		this.$store.commit('NEXT_ID',songId);
+		
       Promise.all([songDetail(songId), songSimi(songId), songComment(songId), songlyric(songId),songUrl(songId)]).then((res) => {
         if (res[0][1].data.code == '200') {
           this.songDetail = res[0][1].data.songs[0];
@@ -105,17 +122,37 @@ export default {
             this.songlyric = result;
         }
 		if(res[4][1].data.code == '200') {
+			
+			// #ifdef MP-WEIXIN
 			this.bgAudioMannager = uni.getBackgroundAudioManager();
 			this.bgAudioMannager.title = this.songDetail.name;
+			// #endif
+			
+			// #ifdef H5
+			if(!this.bgAudioMannager){
+				this.bgAudioMannager= uni.createInnerAudioContext()
+			} 
+			this.iconPlay = 'icon-bofang'
+			this.isPlayRotate = false;
+			// #endif
+			
+			
 			this.bgAudioMannager.src = res[4][1].data.data[0].url || '';
+			this.listenLyricIndex();
 			this.bgAudioMannager.onPlay(()=>{
 				this.iconPlay = 'icon-zanting';
 				this.isPlayRotate = true;
+				this.listenLyricIndex()
 			});
 			this.bgAudioMannager.onPause(()=>{
 				this.iconPlay = 'icon-bofang'; 
 				this.isPlayRotate = false;
+				this.listenLyricIndex()
+				
 			});
+			this.bgAudioMannager.onEnded(()=>{
+				this.getMusic(this.$store.state.nextId)
+			})
 		}
       });
     },
@@ -132,6 +169,27 @@ export default {
 		this.bgAudioMannager.pause()		
 		}
 	},
+	listenLyricIndex(){
+		clearInterval(this.timer)
+		this.timer = setInterval(()=>{
+			for(let i=0;i<this.songlyric.length;i++){
+				if(this.bgAudioMannager.currentTime > this.songlyric[this.songlyric.length-1].time){
+					this.lyricIndex = this.songlyric.length-1;
+					break;
+				}
+				if(this.bgAudioMannager.currentTime > this.songlyric[i].time &&
+				 this.bgAudioMannager.currentTime < this.songlyric[i+1].time ){
+					this.lyricIndex = i;
+				}
+			}
+		},500)
+	},
+	cancelLyricIndex(){
+		clearInterval(this.timer);
+	},
+	handleToSimi(songId){
+		this.getMusic(songId)
+	}
 },
 components: {
     Musichead,
@@ -141,16 +199,17 @@ components: {
 
 <style scoped>					
 .detail-play {
-  width: 290px;
-  height: 290px;
+  width: 580rpx;
+  height: 580rpx;
   background: url("~@/static/disc.png");
-  margin: 107px auto 0 auto;
+  margin: 214rpx auto 0 auto;
   position: relative;
+  background-size: cover;
 }
 
 .detail-play image {
-  width: 185px;
-  height: 185px;
+  width: 370rpx;
+  height: 370rpx;
   border-radius: 50%;
   position: absolute;
   left: 0;
@@ -166,10 +225,10 @@ components: {
 		from{transform: rotate(0deg);}
 		to{transform:rotate(360deg);}
 	}
-.detail-play text {
-  width: 100px;
-  height: 50px;
-  font-size: 50px;
+.detail-play text {        
+  width: 100rpx;
+  height: 100rpx;
+  font-size: 100rpx;
   color: white;
   position: absolute;
   left: 0;
@@ -180,33 +239,33 @@ components: {
 }
 
 .detail-play view {
-  width: 115px;
-  height: 180px;
+  width: 230rpx;
+  height: 360rpx;
   background-size: cover;
   background: url("~@/static/needle.png");
   position: absolute;
-  left: 50px;
+  left: 100rpx;
   right: 0;
-  top: -100px;
+  top: -200rpx;
   margin: auto;
   background-size: cover;
 }
 
 .detail-lyric {
-  font-size: 16px;
-  line-height: 41px;
-  height: 123px;
+  font-size: 32rpx;
+  line-height: 82rpx;
+  height: 246rpx;
   text-align: center;
   overflow: hidden;
   color: #6f6e73;
 }
 
 .detail-lyric-wrap {
-
+transform:.5s;
 }
 
 .detail-lyric-item {
-  height: 41px
+  height: 82rpx
 }
 
 .detail-lyric-item.active {
@@ -214,29 +273,29 @@ components: {
 }
 
 .detail-like {
-  margin: 0 25px;
+  margin: 0 30rpx;
 
 }
 
 .detail-like-head {
-  font-size: 18px;
+  font-size: 36rpx;
   color: white;
-  margin: 25px 0;
+  margin: 50rpx 0;
 
 }
 
 .detail-like-item {
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 28rpx;
 }
 
 .detail-like-img {
-  width: 41px;
-  height: 41px;
-  border-radius: 10px;
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: 20rpx;
   overflow: hidden;
-  margin-right: 10px
+  margin-right: 20rpx
 }
 
 .detail-like-img image {
@@ -250,52 +309,52 @@ components: {
 }
 
 .detail-like-song view:nth-child(1) {
-  font-size: 14px;
+  font-size: 28rpx;
   color: white;
-  margin-bottom: 6px
+  margin-bottom: 12rpx
 }
 
 .detail-like-song view:nth-child(2) {
-  font-size: 11px
+  font-size: 22rpx
 }
 
 .detail-like-song image {
-  width: 13px;
-  height: 10px;
-  margin-right: 5px
+  width: 26rpx;
+  height: 20rpx;
+  margin-right: 10rpx
 }
 
 .detail-like-item text {
-  font-size: 25px;
+  font-size: 50rpx;
   color: #c6c2bf
 }
 
 .detail-comment {
-  margin: 0 15px
+  margin: 0 30rpx
 }
 
 .detail-comment-head {
-  font-size: 36px;
+  font-size: 36rpx;
   color: white;
-  margin: 25px 0;
+  margin: 50rpx 0;
 }
 
 .detail-comment-item {
-  margin-bottom: 14px;
+  margin-bottom: 28rpx;
   display: flex
 }
 
 .detail-comment-img {
-  width: 32px;
-  height: 32px;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 50%;
   overflow: hidden;
-  margin-right: 9px
+  margin-right: 18rpx
 }
 
 .detail-comment-img image {
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 
 .detail-comment-content {
@@ -315,24 +374,24 @@ components: {
 }
 
 .detail-comment-mame view:nth-child(1) {
-  font-size: 13px;
+  font-size: 26rpx;
 }
 
 .detail-comment-mame view:nth-child(2) {
-  font-size: 10px;
+  font-size: 20rpx;
 }
 
 .detail-comment-like {
-  font-size: 14px;
+  font-size: 28rpx;
 
 }
 
 .detail-comment-text {
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 28rpx;
+  line-height: 40rpx;
   color: white;
-  margin-top: 10px;
+  margin-top: 20rpx;
   border-bottom: 1px #e0e0e0 solid;
-  padding-bottom: 20px;
+  padding-bottom: 40rpx;
 }
 </style>

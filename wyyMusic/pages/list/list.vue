@@ -80,6 +80,7 @@ export default {
       if (res[1].data.code == '200') {
         this.playlist = res[1].data.playlist
         this.privileges = res[1].data.privileges
+		this.$store.commit('INIT_TOPLISTIDS',res[1].data.playlist.trackIds)
         this.isLoading = false
 		    uni.hideLoading();
       }
@@ -101,16 +102,16 @@ export default {
 <style scoped>
 .list-head {
   display: flex;
-  margin: 15px
+  margin: 30rpx
 }
 
 .list-head-img {
-  width: 132px;
-  height: 132px;
-  border-radius: 15px;
+  width: 264rpx;
+  height: 264rpx;
+  border-radius: 30rpx;
   overflow: hidden;
   position: relative;
-  margin-right: 21px
+  margin-right: 42rpx
 }
 
 .list-head-img image {
@@ -120,10 +121,10 @@ export default {
 
 .list-head-img text {
   position: absolute;
-  right: 4px;
-  top: 4px;
+  right: 8rpx;
+  top: 8rpx;
   color: white;
-  font-size: 13px;
+  font-size: 26rpx;
 }
 
 .list-head-text {
@@ -133,82 +134,82 @@ export default {
 
 .list-head-text view:nth-child(1) {
   color: white;
-  font-size: 17px
+  font-size: 34rpx
 }
 
 .list-head-text view:nth-child(2) {
   display: flex;
-  margin: 10px 0;
-  font-size: 12px;
+  margin: 20rpx 0;
+  font-size: 24rpx;
   align-items: center
 }
 
 .list-head-text view:nth-child(2) image {
-  width: 27px;
-  height: 27px;
-  border-radius: 11px;
-  margin-right: 7px
+  width: 34rpx;
+  height: 34rpx;
+  border-radius: 22rpx;
+  margin-right: 14rpx
 }
 
 .list-head-text view:nth-child(3) {
-  line-height: 17px;
-  font-size: 11px
+  line-height: 34rpx;
+  font-size: 22rpx
 }
 
 .list-share {
-  width: 165px;
-  height: 37px;
+  width: 330rpx;
+  height: 74rpx;
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.4);
-  border-radius: 18px;
+  border-radius: 36rpx;
   color: white;
   text-align: center;
-  line-height: 37px;
-  font-size: 14px;
+  line-height: 74rpx;
+  font-size: 28rpx;
 }
 
 .list-share text {
-  margin-right: 8px
+  margin-right: 16rpx
 }
 
 .list-music {
   background: white;
-  border-radius: 25px;
-  margin-top: 20px;
+  border-radius: 50rpx;
+  margin-top: 40rpx;
   overflow: hidden
 }
 
 .list-music-head {
-  height: 25px;
-  margin: 15px 0 35px 11px;
+  height: 50rpx;
+  margin: 30rpx 0 70rpx 22rpx;
 }
 
 .list-music-head text:nth-child(1) {
-  height: 25px;
-  font-size: 25px
+  height: 50rpx;
+  font-size: 50rpx
 }
 
 .list-music-head text:nth-child(2) {
-  font-size: 15px;
-  margin: 0 5px 0 13px
+  font-size: 30rpx;
+  margin: 0 10rpx 0 26rpx
 }
 
 .list-music-head text:nth-child(3) {
-  font-size: 13px;
+  font-size: 26px;
   color: #b2b2b2
 }
 
 .list-music-item {
   display: flex;
-  margin: 0 16px 33px 23px;
+  margin: 0 32rpx 66rpx 46rpx;
   align-items: center;
   color: #959595;
 }
 
 .list-music-top {
-  width: 29px;
-  font-size: 15px;
-  line-height: 25px
+  width: 58rpx;
+  font-size: 30rpx;
+  line-height: 50rpx
 }
 
 .list-music-song {
@@ -216,7 +217,7 @@ export default {
 }
 
 .list-music-song view:nth-child(1) {
-  font-size: 14px;
+  font-size: 24rpx;
   color: black;
   width: 70vw;
   white-space: nowrap;
@@ -226,7 +227,7 @@ export default {
 }
 
 .list-music-song view:nth-child(2) {
-  font-size: 10px;
+  font-size: 20rpx;
   align-items: center;
   width: 70vw;
   white-space: nowrap;
@@ -235,13 +236,13 @@ export default {
 }
 
 .list-music-song view:nth-child(2) image {
-  width: 16px;
-  height: 10px;
-  margin-right: 5px;
+  width: 32rpx;
+  height: 20rpx;
+  margin-right: 10rpx;
 }
 
 .list-music-item text {
-  font-size: 25px;
+  font-size: 50rpx;
   color: #c7c7c7
 }
 </style>

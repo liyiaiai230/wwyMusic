@@ -66,40 +66,40 @@ export default {
 .index-search {
   display: flex;
   align-items: center;
-  height: 35px;
-  margin: 35px 15px 15px 15px;
-  border-radius: 25px;
+  height: 70rpx;
+  margin: 70rpx 30rpx 30rpx 30rpx;
+  border-radius: 50rpx;
   background: #F7F7F7;
 }
 
 .index-search text {
-  font-size: 13px;
-  margin-left: 13px;
-  margin-right: 13px;
+  font-size: 26rpx;
+  margin-left: 26rpx;
+  margin-right: 26rpx;
 
 }
 
 .index-search input {
-  font-size: 14px;
+  font-size: 28rpx;
   flex: 1;
 }
 
 .index-list {
-  margin: 0 15px;
+  margin: 0 30rpx;
 }
 
 .index-list-item {
   display: flex;
-  margin-bottom: 17px;
+  margin-bottom: 34rpx;
 }
 
 .index-list-img {
-  width: 106px;
-  height: 106px;
+  width: 212rpx;
+  height: 212rpx;
   position: relative;
-  border-radius: 15px;
+  border-radius: 30rpx;
   overflow: hidden;
-  margin-right: 11px;
+  margin-right: 22rpx;
 }
 
 .index-list-img image {
@@ -109,14 +109,14 @@ export default {
 
 .index-list-img text {
   position: absolute;
-  left: 6px;
+  left: 12rpx;
   color: white;
-  font-size: 10px;
-  bottom: 8px
+  font-size: 20rpx;
+  bottom: 16rpx
 }
 
 .index-list-text {
-  font-size: 12px;
-  line-height: 33px;
+  font-size: 24rpx;
+  line-height: 66rpx;
 }
 </style>
